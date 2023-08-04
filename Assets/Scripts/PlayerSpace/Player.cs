@@ -20,14 +20,24 @@ namespace PlayerSpace
         private float m_targetX;
         private float m_smoothX;
         private float m_dragSpeed;
+        
+        private float m_baseFireRate;
+        private float m_maxFireRate;
 
+        private float m_baseFireRange;
+        private float m_maxFireRange;
+        
         private int m_maxGunBurst;
 
         private const float smoothTime = 0.1f;
 
-
+        private float m_range;
+        
+        
         private void Awake()
         {
+            DI.Bind(this);
+            
             m_gameManager = DI.Resolve<GameManager>();
             var parameters = m_gameManager.GameParameters;
             
@@ -35,6 +45,12 @@ namespace PlayerSpace
             m_moveSpeed = parameters.PlayerSpeed;
             m_dragSensitivity = parameters.DragSensitivity;
             m_maxGunBurst = parameters.MaxGunBurst;
+            
+            m_baseFireRate = parameters.BaseFireRate;
+            m_maxFireRate = parameters.MaxFireRate;
+
+            m_baseFireRange = parameters.BaseFireRange;
+            m_maxFireRange = parameters.MaxFireRange;
         }
 
         private void Update()
@@ -57,23 +73,46 @@ namespace PlayerSpace
             transform.position = transform.position.WithX(m_smoothX);
         }
 
+        public void SetFireRate(float fireRate)
+        {
+            fireRate = Mathf.Clamp(fireRate, m_baseFireRate, m_maxFireRate);
+            
+            foreach (var gun in m_guns)
+            {
+                gun.SetFireRate(fireRate);
+            }
+        }
+        
         /// <summary>
         /// Must be odd in order for one bullet to be shot from the middle.
         /// </summary>
         public void SetFireBurst(int burst)
         {
-            burst = Mathf.Clamp(burst, 0, m_maxGunBurst);
+            burst = Mathf.Clamp(burst, 1, m_maxGunBurst);
 
             foreach (var gun in m_guns)
             {
                 gun.SetFireBurst(burst);
             }
         }
+
+        public void SetBulletSize(bool isLarge)
+        {
+            foreach (var gun in m_guns)
+            {
+                gun.SetBulletSize(isLarge);
+            }
+        }
+
+        public void SetRange(float range) => m_range = range;
         
         private void OnTriggerEnter(Collider other)
         {
             if(other.TryGetComponent(out IInteractable interactable))
                 interactable.OnPlayerEnter(this);
         }
+        
+        public bool IsBulletOutOfRange(Vector3 bulletPos) => 
+            Vector3.Distance(transform.position, bulletPos) > m_range;
     }
 }

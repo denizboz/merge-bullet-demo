@@ -11,9 +11,15 @@ namespace Managers
     {
         private readonly List<Bullet> m_activeBullets = new List<Bullet>();
 
+        private Player m_player;
+        
         private float m_bulletSpeed;
         private bool m_isOn;
 
+        private float m_timer;
+        private const float bulletRangeCheckPeriod = 1f;
+        
+        
         public void Bind()
         {
             DI.Bind(this);
@@ -43,6 +49,23 @@ namespace Managers
             {
                 bullet.MoveForward(distance);
             }
+
+            m_timer += Time.deltaTime;
+
+            if (m_timer > bulletRangeCheckPeriod)
+            {
+                m_timer = 0f;
+                CheckForOutOfRangeBullets();
+            }
+        }
+
+        private void CheckForOutOfRangeBullets()
+        {
+            foreach (var bullet in m_activeBullets)
+            {
+                if (m_player.IsBulletOutOfRange(bullet.Position))
+                    GameEventSystem.Invoke<BulletDestroyedEvent>(bullet);
+            }
         }
         
         private void OnBulletActivated(object bullet)
@@ -57,6 +80,7 @@ namespace Managers
 
         private void OnLevelStarted(object none)
         {
+            m_player = DI.Resolve<Player>();
             m_isOn = true;
         }
 

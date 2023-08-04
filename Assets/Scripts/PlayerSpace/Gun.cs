@@ -1,4 +1,6 @@
 ﻿using CommonTools.Runtime.DependencyInjection;
+using Events;
+using Events.Implementations;
 using Managers;
 using Unity.Mathematics;
 using UnityEngine;
@@ -17,7 +19,7 @@ namespace PlayerSpace
         private int m_fireBurst;
         private float m_firePeriod;
         private float m_burstAngleCover;
-        
+
         private float m_timer;
         
         private bool m_isFiring;
@@ -26,14 +28,20 @@ namespace PlayerSpace
         private void Awake()
         {
             m_bulletFactory = DI.Resolve<BulletFactory>();
+            
             var gameManager = DI.Resolve<GameManager>();
+            var parameters = gameManager.GameParameters;
 
-            m_burstAngleCover = gameManager.GameParameters.BurstAngleCover;
-
-            CreateSubBarrels(gameManager.GameParameters.MaxGunBurst);
-            SetFirePeriod(gameManager.GameParameters.BaseFireRate);
+            m_burstAngleCover = parameters.BurstAngleCover;
+            
+            CreateSubBarrels(parameters.MaxGunBurst);
+            SetFireRate(parameters.BaseFireRate);
 
             SetFireBurst(1);
+            
+            GameEventSystem.AddListener<LevelStartedEvent>(EnableFiring);
+            GameEventSystem.AddListener<LevelWonEvent>(DisableFiring);
+            GameEventSystem.AddListener<LevelFailedEvent>(DisableFiring);
         }
 
         private void Update()
@@ -60,8 +68,18 @@ namespace PlayerSpace
                 bullet.SetDirection(m_subBarrels[i].forward);
             }
         }
+
+        private void EnableFiring(object none)
+        {
+            m_isFiring = true;
+        }
+
+        private void DisableFiring(object none)
+        {
+            m_isFiring = false;
+        }
         
-        private void SetFirePeriod(float fireRate)
+        public void SetFireRate(float fireRate)
         {
             m_firePeriod = 1f / fireRate;
         }
@@ -72,6 +90,11 @@ namespace PlayerSpace
             SetSubBarrels();
         }
 
+        public void SetBulletSize(bool isLarge)
+        {
+            m_isLarger = isLarge;
+        }
+        
         private void SetSubBarrels()
         {
             if (m_fireBurst == 1)
@@ -110,6 +133,13 @@ namespace PlayerSpace
 
                 m_subBarrels[i] = barrel.transform;
             }
+        }
+
+        private void OnDestroy()
+        {
+            GameEventSystem.RemoveListener<LevelStartedEvent>(EnableFiring);
+            GameEventSystem.RemoveListener<LevelWonEvent>(DisableFiring);
+            GameEventSystem.RemoveListener<LevelFailedEvent>(DisableFiring);
         }
     }
 }

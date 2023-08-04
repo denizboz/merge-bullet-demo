@@ -13,6 +13,8 @@ namespace PlayerSpace
         private const int enlargeFactor = 2;
 
         public int Damage => enlargeFactor * m_level;
+        public Vector3 Position => transform.position;
+        
         
         public void MoveForward(float distance)
         {

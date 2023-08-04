@@ -19,7 +19,7 @@ namespace Gates
         
         public override void OnPlayerEnter(Player player)
         {
-            // increase fire rate
+            player.SetFireRate(m_fireRate);
             gameObject.SetActive(false);
         }
         

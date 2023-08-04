@@ -6,7 +6,7 @@ namespace Gates
     {
         public override void OnPlayerEnter(Player player)
         {
-            //
+            player.SetBulletSize(isLarge: true);
         }
     }
 }

@@ -14,8 +14,17 @@ namespace Utility
         [Range(1f, 10f)]
         public float MoveRange;
 
-        [Range(1f, 10f)]
+        [Range(0.1f, 3f)]
         public float BaseFireRate;
+
+        [Range(3f, 10f)]
+        public float MaxFireRate;
+
+        [Range(10f, 30f)]
+        public float BaseFireRange;
+        
+        [Range(30f, 100f)]
+        public float MaxFireRange;
 
         [Range(10f, 50f)]
         public float BulletSpeed;
