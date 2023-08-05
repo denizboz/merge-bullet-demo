@@ -51,8 +51,6 @@ namespace Merge
                     {
                         m_selectedBullet = bullet;
                         m_initialBulletPos = bullet.Position;
-                        
-                        bullet.EnableCollider(false);
                     }
                 }
             }
@@ -78,7 +76,6 @@ namespace Merge
                         if (!bulletAtCell)
                         {
                             m_selectedBullet.SetPosition(cell.Position);
-                            m_selectedBullet.EnableCollider(true);
                             
                             var index = m_mergeGrid.IndexOfBullet(m_selectedBullet);
                             
@@ -126,17 +123,13 @@ namespace Merge
             
             m_mergeGrid.SaveData();
             
-            first.EnableCollider(true);
-            
             m_bulletFactory.Return(first);
             m_bulletFactory.Return(second);
         }
         
         private void ReleaseSelectedBullet()
         {
-            m_selectedBullet.EnableCollider(true);
             m_selectedBullet.TweenPosition(m_initialBulletPos, 0.1f);
-
             m_selectedBullet = null;
         }
         

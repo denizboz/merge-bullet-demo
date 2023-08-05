@@ -11,6 +11,7 @@ namespace Merge
         [SerializeField] private GridParametersSO m_gridParameters;
         
         public float CellSize { get; private set; }
+        public int ItemSize { get; private set; }
         public float GridElevation { get; private set; }
         public float ElevationOffset { get; private set; }
         
@@ -28,6 +29,7 @@ namespace Merge
         private void Awake()
         {
             CellSize = m_gridParameters.CellSize;
+            ItemSize = m_gridParameters.ItemSize;
             
             GridElevation = m_gridParameters.GridHeight;
             ElevationOffset = m_gridParameters.ElevationOffset;

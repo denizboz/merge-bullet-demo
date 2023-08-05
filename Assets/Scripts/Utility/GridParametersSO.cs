@@ -8,6 +8,9 @@ namespace Utility
         [Range(1f, 5f), Tooltip("In terms of world units.")]
         public float CellSize;
 
+        [Range(1, 5), Tooltip("Local scale of the bullets used for merge actions.")]
+        public int ItemSize;
+
         [Range(0f, 5f), Tooltip("Grid elevation from the ground.")]
         public float GridHeight;
 

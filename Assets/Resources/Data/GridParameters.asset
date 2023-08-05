@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: GridParameters
   m_EditorClassIdentifier: 
   CellSize: 2
+  ItemSize: 2
   GridHeight: 0.5
   ElevationOffset: 0.5
   LineWidth: 0.15

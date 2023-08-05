@@ -1,5 +1,7 @@
 ﻿using System;
 using CommonTools.Runtime.DependencyInjection;
+using Events;
+using Events.Implementations;
 using Managers;
 using PlayerSpace;
 using UnityEngine;
@@ -26,13 +28,13 @@ namespace Merge
         private const int m_gridSize = gridWidth * gridHeight;
         // const parameters might be dynamic in future
         
-        private const int firstGameBulletCount = 12;
+        private const int firstGameBulletCount = 3;
         private const string keyForFirstSave = "saved_once";
 
         public Bullet BulletAtIndex(int index) => m_bullets[index];
         public int IndexOfBullet(Bullet bullet) => Array.IndexOf(m_bullets, bullet);
-        
 
+        
         public void Bind()
         {
             DI.Bind(this);
@@ -47,6 +49,8 @@ namespace Merge
             m_cells = new GridCell[m_gridSize];
             m_gridLevelData = new int[m_gridSize];
 
+            GameEventSystem.AddListener<BuyButtonPressedEvent>(OnBuyButtonPressed);
+            
             if (!PlayerPrefs.HasKey(keyForFirstSave))
                 CreateAndSaveFirstData();
         }
@@ -58,6 +62,14 @@ namespace Merge
             
             CreateCells();
             LoadGrid();
+        }
+
+        private void Update()
+        {
+            // TODO: DEBUG PURPOSE -- START
+            if (Input.GetKeyDown(KeyCode.Return))
+                OnBuyButtonPressed(0);
+            // TODO: DEBUG PURPOSE -- END
         }
 
         private void CreateCells()
@@ -78,6 +90,8 @@ namespace Merge
         
         private void LoadGrid()
         {
+            var bulletSize = m_gridRenderer.ItemSize;
+            
             for (var i = 0; i < m_gridLevelData.Length; i++)
             {
                 var level = m_gridLevelData[i];
@@ -85,20 +99,50 @@ namespace Merge
                 if (level == -1)
                     continue;
                 
-                var bullet = m_bulletFactory.Get(level, size: 2);
+                var bullet = m_bulletFactory.Get(level, bulletSize);
                 bullet.SetPosition(m_cellCenters[i]);
 
                 m_bullets[i] = bullet;
                 m_cells[i].SetIndex(i);
             }
         }
+        
+        private void OnBuyButtonPressed(object bulletLevel)
+        {
+            AddNewBullet((int)bulletLevel);
+            SaveData();
+        }
+        
+        private void AddNewBullet(int level)
+        {
+            var emptyIndex = -1;
+                
+            for (var i = 0; i < m_bullets.Length; i++)
+            {
+                if (m_bullets[i])
+                    continue;
 
+                emptyIndex = i;
+                break;
+            }
+
+            if (emptyIndex == -1)
+                return;
+
+            var size = m_gridRenderer.ItemSize;
+            
+            var bullet = m_bulletFactory.Get(level, size);
+            bullet.SetPosition(m_cellCenters[emptyIndex]);
+            
+            UpdateCell(emptyIndex, bullet);
+        }
+        
         public void UpdateCell(int index, Bullet bullet)
         {
             m_bullets[index] = bullet;
             m_gridLevelData[index] = bullet ? bullet.Level : -1;
         }
-
+        
         public void SaveData()
         {
             DataSystem.SaveArray(m_gridLevelData);
@@ -113,6 +157,11 @@ namespace Merge
 
             DataSystem.SaveArray(m_gridLevelData);
             PlayerPrefs.SetInt(keyForFirstSave, 1);
+        }
+
+        private void OnDestroy()
+        {
+            GameEventSystem.AddListener<BuyButtonPressedEvent>(OnBuyButtonPressed);
         }
     }
 }

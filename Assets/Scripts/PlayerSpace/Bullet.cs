@@ -6,11 +6,9 @@ namespace PlayerSpace
 {
     public class Bullet : MonoBehaviour
     {
-        // public int Level { get; private set; }
-        public int Level;
+        public int Level { get; private set; }
         
         [SerializeField] private MeshRenderer m_renderer;
-        [SerializeField] private Collider m_collider;
         
         private int m_size;
 
@@ -59,11 +57,6 @@ namespace PlayerSpace
             gameObject.SetActive(value);
         }
 
-        public void EnableCollider(bool value)
-        {
-            m_collider.enabled = value;
-        }
-        
         private void OnTriggerEnter(Collider other)
         {
             if(other.TryGetComponent(out IInteractable interactable))
