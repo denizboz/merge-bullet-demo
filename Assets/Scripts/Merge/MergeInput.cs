@@ -107,6 +107,8 @@ namespace Merge
                 {
                     ReleaseSelectedBullet();
                 }
+
+                m_selectedBullet = null;
             }
         }
 

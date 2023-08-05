@@ -34,5 +34,10 @@ namespace Utility
 
         [Range(5f, 90f), Tooltip("Angle to be covered by bullets in multiple shot scenario.")]
         public float BurstAngleCover;
+        
+        [Range(0, 10)]
+        public int InitialBulletCount;
+
+        public int InitialCurrency;
     }
 }

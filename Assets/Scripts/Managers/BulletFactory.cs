@@ -40,7 +40,7 @@ namespace Managers
             bullet.SetActive(true);
             bullet.SetLevel(level);
             bullet.SetSize(size);
-            bullet.SetMaterial(m_materials[level]);
+            bullet.SetMaterial(m_materials[level - 1]);
             
             // set bullet mesh instead of material here in the fbx case:
             // bullet.SetMesh(m_meshes[level]);

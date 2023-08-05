@@ -1,9 +1,12 @@
-﻿using UnityEngine;
+﻿using CommonTools.Runtime.DependencyInjection;
+using Events;
+using Events.Implementations;
+using UnityEngine;
 using Utility;
 
 namespace Managers
 {
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, IDependency
     {
         [SerializeField] private GameParametersSO m_gameParameters;
         [SerializeField] private GameObject m_playerPrefab;
@@ -20,8 +23,16 @@ namespace Managers
         public bool FinalStageOver { get; private set; }
         public GameParametersSO GameParameters => m_gameParameters;
 
+
+        public void Bind()
+        {
+            DI.Bind(this);
+        }
+        
         private void Awake()
         {
+            return;
+            
             if (!PlayerPrefs.HasKey(keyForLevelNumber))
                 PlayerPrefs.SetInt(keyForLevelNumber, 0);
 
@@ -34,6 +45,10 @@ namespace Managers
         private void LoadLevel()
         {
             var currentLevel = m_levels[m_currentLevelNumber];
+            
+            // load player & level objects
+            
+            GameEventSystem.Invoke<LevelLoadedEvent>(m_currentLevelNumber);
         }
 
         private void OnFinishLineReached(object none)

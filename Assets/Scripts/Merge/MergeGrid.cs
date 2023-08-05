@@ -14,8 +14,11 @@ namespace Merge
         [SerializeField] private Transform m_center;
         [SerializeField] private GridCell m_cellPrefab;
         
+        [SerializeField] private LevelPriceData m_levelPriceData;
+        
         private GridRenderer m_gridRenderer;
         private BulletFactory m_bulletFactory;
+        private CurrencyManager m_currencyManager;
 
         private Bullet[] m_bullets;
         private GridCell[] m_cells;
@@ -28,7 +31,6 @@ namespace Merge
         private const int m_gridSize = gridWidth * gridHeight;
         // const parameters might be dynamic in future
         
-        private const int firstGameBulletCount = 3;
         private const string keyForFirstSave = "saved_once";
 
         public Bullet BulletAtIndex(int index) => m_bullets[index];
@@ -44,6 +46,7 @@ namespace Merge
         {
             m_gridRenderer = DI.Resolve<GridRenderer>();
             m_bulletFactory = DI.Resolve<BulletFactory>();
+            m_currencyManager = DI.Resolve<CurrencyManager>();
 
             m_bullets = new Bullet[m_gridSize];
             m_cells = new GridCell[m_gridSize];
@@ -62,14 +65,6 @@ namespace Merge
             
             CreateCells();
             LoadGrid();
-        }
-
-        private void Update()
-        {
-            // TODO: DEBUG PURPOSE -- START
-            if (Input.GetKeyDown(KeyCode.Return))
-                OnBuyButtonPressed(0);
-            // TODO: DEBUG PURPOSE -- END
         }
 
         private void CreateCells()
@@ -109,8 +104,13 @@ namespace Merge
         
         private void OnBuyButtonPressed(object bulletLevel)
         {
-            AddNewBullet((int)bulletLevel);
-            SaveData();
+            var price = m_levelPriceData.GetPriceOf((int)bulletLevel);
+
+            if (m_currencyManager.TrySpend(price))
+            {
+                AddNewBullet(level: 1);
+                SaveData();
+            }
         }
         
         private void AddNewBullet(int level)
@@ -150,9 +150,12 @@ namespace Merge
         
         private void CreateAndSaveFirstData()
         {
+            var gameManager = DI.Resolve<GameManager>();
+            var firstGameBulletCount = gameManager.GameParameters.InitialBulletCount;
+            
             for (int index = 0; index < m_gridSize; index++)
             {
-                m_gridLevelData[index] = index < firstGameBulletCount ? 0 : -1;
+                m_gridLevelData[index] = index < firstGameBulletCount ? 1 : -1;
             }
 
             DataSystem.SaveArray(m_gridLevelData);

@@ -22,3 +22,5 @@ MonoBehaviour:
   BulletSpeed: 10
   MaxGunBurst: 1
   BurstAngleCover: 5
+  InitialBulletCount: 3
+  InitialCurrency: 100
