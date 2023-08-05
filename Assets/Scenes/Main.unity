@@ -155,6 +155,9 @@ MonoBehaviour:
   m_bulletLayer:
     serializedVersion: 2
     m_Bits: 64
+  m_cellLayer:
+    serializedVersion: 2
+    m_Bits: 128
   m_groundLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -202,6 +205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_center: {fileID: 104269406}
+  m_cellPrefab: {fileID: 8348594998352604810, guid: 0cffd7378bd2ec64cb0419782d7605a7, type: 3}
 --- !u!4 &104269406
 Transform:
   m_ObjectHideFlags: 0

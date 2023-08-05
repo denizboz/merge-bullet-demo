@@ -9,8 +9,6 @@ namespace PlayerSpace
         // public int Level { get; private set; }
         public int Level;
         
-        public int GridIndex { get; private set; }
-
         [SerializeField] private MeshRenderer m_renderer;
         [SerializeField] private Collider m_collider;
         
@@ -27,8 +25,6 @@ namespace PlayerSpace
 
         public void SetLevel(int level) => Level = level;
 
-        public void SetGridIndex(int index) => GridIndex = index;
-        
         public void SetSize(int size)
         {
             if (size == 1)

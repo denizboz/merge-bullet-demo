@@ -13,5 +13,7 @@ MonoBehaviour:
   m_Name: GridParameters
   m_EditorClassIdentifier: 
   CellSize: 2
+  GridHeight: 0.5
+  ElevationOffset: 0.5
   LineWidth: 0.15
   LineMaterial: {fileID: 2100000, guid: d6b7c88a117754f46b57eecb0b97d4fa, type: 2}

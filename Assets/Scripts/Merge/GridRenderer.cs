@@ -1,4 +1,5 @@
-﻿using CommonTools.Runtime.DependencyInjection;
+﻿using CommonTools.Runtime;
+using CommonTools.Runtime.DependencyInjection;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Utility;
@@ -9,7 +10,10 @@ namespace Merge
     {
         [SerializeField] private GridParametersSO m_gridParameters;
         
-        private float m_cellSize;
+        public float CellSize { get; private set; }
+        public float GridElevation { get; private set; }
+        public float ElevationOffset { get; private set; }
+        
         private float m_lineWidth;
         private Material m_lineMat;
 
@@ -23,7 +27,11 @@ namespace Merge
         
         private void Awake()
         {
-            m_cellSize = m_gridParameters.CellSize;
+            CellSize = m_gridParameters.CellSize;
+            
+            GridElevation = m_gridParameters.GridHeight;
+            ElevationOffset = m_gridParameters.ElevationOffset;
+            
             m_lineWidth = m_gridParameters.LineWidth;
             m_lineMat = m_gridParameters.LineMaterial;
         }
@@ -35,13 +43,13 @@ namespace Merge
         {
             CreateRenderers(width + height + 2);
             
-            var actualWidth = width * m_cellSize;
-            var actualHeight = height * m_cellSize;
+            var actualWidth = width * CellSize;
+            var actualHeight = height * CellSize;
 
             var verticalCount = width + 1;
             var horizontalCount = height + 1;
 
-            var lowerLeft = center + (actualWidth / 2f) * Vector3.left + (actualHeight / 2f) * Vector3.back;
+            var lowerLeft = center.WithY(GridElevation) + (actualWidth / 2f) * Vector3.left + (actualHeight / 2f) * Vector3.back;
 
             var iterator = 0;
             
@@ -49,7 +57,7 @@ namespace Merge
             {
                 var lineRenderer = m_lineRenderers[iterator];
                 
-                var startPos = lowerLeft + i * m_cellSize * Vector3.right;
+                var startPos = lowerLeft + i * CellSize * Vector3.right;
                 var endPos = startPos + actualHeight * Vector3.forward;
                 
                 lineRenderer.gameObject.SetActive(true);
@@ -63,7 +71,7 @@ namespace Merge
             {
                 var lineRenderer = m_lineRenderers[iterator];
                 
-                var startPos = lowerLeft + i * m_cellSize * Vector3.forward;
+                var startPos = lowerLeft + i * CellSize * Vector3.forward;
                 var endPos = startPos + actualWidth * Vector3.right;
                 
                 lineRenderer.gameObject.SetActive(true);
@@ -78,7 +86,7 @@ namespace Merge
 
         private Vector3[] GetCellCenters(Vector3 lowerLeft, int width, int height)
         {
-            lowerLeft += (m_cellSize / 2f * Vector3.right + m_cellSize / 2f * Vector3.forward);
+            lowerLeft += (CellSize / 2f * Vector3.right + CellSize / 2f * Vector3.forward);
             
             var centers = new Vector3[width * height];
 
@@ -86,7 +94,7 @@ namespace Merge
             {
                 for (int j = 0; j < width; j++)
                 {
-                    centers[i * width + j] = lowerLeft + i * m_cellSize * Vector3.forward + j * m_cellSize * Vector3.right;
+                    centers[i * width + j] = lowerLeft + i * CellSize * Vector3.forward + j * CellSize * Vector3.right;
                 }
             }
             

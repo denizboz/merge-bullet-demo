@@ -92,7 +92,7 @@ namespace Managers
 
             m_poolSize *= 2;
             
-            Debug.LogWarning($"Bullet pool capacity increased from {(m_poolSize / 2).ToString()} to {m_poolSize.ToString()}");
+            // Debug.LogWarning($"Bullet pool capacity increased from {(m_poolSize / 2).ToString()} to {m_poolSize.ToString()}");
         }
 
         private void OnDestroy()
