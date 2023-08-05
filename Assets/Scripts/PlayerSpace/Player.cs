@@ -96,11 +96,11 @@ namespace PlayerSpace
             }
         }
 
-        public void SetBulletSize(bool isLarge)
+        public void SetBulletSize(int size)
         {
             foreach (var gun in m_guns)
             {
-                gun.SetBulletSize(isLarge);
+                gun.SetBulletSize(size);
             }
         }
 

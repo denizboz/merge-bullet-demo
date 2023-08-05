@@ -1,17 +1,15 @@
-﻿using PlayerSpace;
+﻿using TMPro;
+using UnityEngine;
 
 namespace Obstacles
 {
     public class Wall : Obstacle
     {
-        public override void OnBulletEnter(Bullet bullet)
-        {
-            //
-        }
+        [SerializeField] private TextMeshPro m_healthUI;
         
-        public override void OnPlayerEnter(Player player)
+        protected override void UpdateUI()
         {
-            //
+            m_healthUI.text = health.ToString();
         }
     }
 }

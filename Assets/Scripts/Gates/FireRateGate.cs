@@ -2,24 +2,20 @@
 using Events;
 using Events.Implementations;
 using PlayerSpace;
-using TMPro;
 using UnityEngine;
 
 namespace Gates
 {
     public class FireRateGate : Gate
     {
-        [SerializeField] private int m_fireRate;
-
         [SerializeField] private MeshRenderer m_renderer;
-        [SerializeField] private TextMeshPro m_fireRateUI;
         
         [SerializeField] private Material m_positiveMat;
         [SerializeField] private Material m_negativeMat;
         
         public override void OnPlayerEnter(Player player)
         {
-            player.SetFireRate(m_fireRate);
+            player.SetFireRate(effectPower);
             gameObject.SetActive(false);
         }
         
@@ -31,29 +27,21 @@ namespace Gates
 
         private void UpdateRate(int change)
         {
-            if (m_fireRate.ChangesSignOnUpdate(change))
+            if (effectPower.ChangesSignOnUpdate(change))
                 UpdateColor();
             
-            m_fireRate += change;
-            UpdateText();
+            effectPower += change;
+            UpdateUI();
         }
 
-        private void UpdateText()
+        protected override void UpdateUI()
         {
-            m_fireRateUI.text = m_fireRate.ToString();
+            effectUI.text = effectPower.ToString();
         }
 
         private void UpdateColor()
         {
-            m_renderer.sharedMaterial = m_fireRate > 0 ? m_positiveMat : m_negativeMat;
+            m_renderer.sharedMaterial = effectPower > 0 ? m_positiveMat : m_negativeMat;
         }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            UpdateText();
-            UpdateColor();
-        }
-#endif
     }
 }

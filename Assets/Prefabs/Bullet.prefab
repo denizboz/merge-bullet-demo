@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8747857616920594338}
   - component: {fileID: 8747857616920594349}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bullet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,6 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_renderer: {fileID: 8747857616980457985}
+  m_collider: {fileID: 8747857616980457984}
 --- !u!1 &8747857616980457986
 GameObject:
   m_ObjectHideFlags: 0
@@ -57,7 +58,7 @@ GameObject:
   - component: {fileID: 8747857616980457990}
   - component: {fileID: 8747857616980457985}
   - component: {fileID: 8747857616980457984}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: body
   m_TagString: Untagged
   m_Icon: {fileID: 0}

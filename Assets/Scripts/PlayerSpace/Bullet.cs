@@ -1,18 +1,22 @@
-﻿using Interfaces;
+﻿using DG.Tweening;
+using Interfaces;
 using UnityEngine;
 
 namespace PlayerSpace
 {
     public class Bullet : MonoBehaviour
     {
-        [SerializeField] private MeshRenderer m_renderer;
-
-        private int m_level;
+        // public int Level { get; private set; }
+        public int Level;
         
-        private bool m_isLarge;
-        private const int enlargeFactor = 2;
+        public int GridIndex { get; private set; }
 
-        public int Damage => enlargeFactor * m_level;
+        [SerializeField] private MeshRenderer m_renderer;
+        [SerializeField] private Collider m_collider;
+        
+        private int m_size;
+
+        public int Damage => m_size * Level;
         public Vector3 Position => transform.position;
         
         
@@ -21,23 +25,27 @@ namespace PlayerSpace
             transform.position += distance * transform.forward;
         }
 
-        public void SetLevel(int level)
-        {
-            m_level = level;
-        }
+        public void SetLevel(int level) => Level = level;
+
+        public void SetGridIndex(int index) => GridIndex = index;
         
-        public void SetSize(bool large)
+        public void SetSize(int size)
         {
-            if (large == m_isLarge)
+            if (size == 1)
                 return;
 
-            transform.localScale = (large ? enlargeFactor : 1f) * Vector3.one;
-            m_isLarge = large;
+            m_size = size;
+            transform.localScale = m_size * Vector3.one;
         }
 
         public void SetPosition(Vector3 position)
         {
             transform.position = position;
+        }
+
+        public void TweenPosition(Vector3 pos, float duration, Ease ease = Ease.InOutQuad)
+        {
+            transform.DOMove(pos, duration).SetEase(ease);
         }
         
         public void SetDirection(Vector3 direction)
@@ -53,6 +61,11 @@ namespace PlayerSpace
         public void SetActive(bool value)
         {
             gameObject.SetActive(value);
+        }
+
+        public void EnableCollider(bool value)
+        {
+            m_collider.enabled = value;
         }
         
         private void OnTriggerEnter(Collider other)

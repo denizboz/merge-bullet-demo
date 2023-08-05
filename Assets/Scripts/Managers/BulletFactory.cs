@@ -31,7 +31,7 @@ namespace Managers
             CreatePool();
         }
 
-        public Bullet Get(int level, bool large = false)
+        public Bullet Get(int level, int size = 1)
         {
             EnsurePoolCapacity();
             
@@ -39,7 +39,7 @@ namespace Managers
             
             bullet.SetActive(true);
             bullet.SetLevel(level);
-            bullet.SetSize(large);
+            bullet.SetSize(size);
             bullet.SetMaterial(m_materials[level]);
             
             // set bullet mesh instead of material here in the fbx case:
@@ -50,12 +50,16 @@ namespace Managers
             return bullet;
         }
 
+        public void Return(Bullet bullet)
+        {
+            bullet.SetActive(false);
+            m_bulletPool.Enqueue(bullet);
+        }
+        
         private void OnBulletDestroyed(object usedBullet)
         {
             var bullet = (Bullet)usedBullet;
-            bullet.SetActive(false);
-            
-            m_bulletPool.Enqueue(bullet);
+            Return(bullet);
         }
         
         private void CreatePool()

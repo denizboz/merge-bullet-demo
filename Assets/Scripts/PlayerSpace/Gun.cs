@@ -15,6 +15,7 @@ namespace PlayerSpace
         private BulletFactory m_bulletFactory;
 
         private int m_bulletLevel;
+        private int m_bulletSize;
         
         private int m_fireBurst;
         private float m_firePeriod;
@@ -23,7 +24,6 @@ namespace PlayerSpace
         private float m_timer;
         
         private bool m_isFiring;
-        private bool m_isLarger;
 
         private void Awake()
         {
@@ -62,7 +62,7 @@ namespace PlayerSpace
         {
             for (var i = 0; i < m_fireBurst; i++)
             {
-                var bullet = m_bulletFactory.Get(m_bulletLevel, m_isLarger);
+                var bullet = m_bulletFactory.Get(m_bulletLevel, m_bulletSize);
                 
                 bullet.SetPosition(m_barrel.position);
                 bullet.SetDirection(m_subBarrels[i].forward);
@@ -90,9 +90,9 @@ namespace PlayerSpace
             SetSubBarrels();
         }
 
-        public void SetBulletSize(bool isLarge)
+        public void SetBulletSize(int size)
         {
-            m_isLarger = isLarge;
+            m_bulletSize = size;
         }
         
         private void SetSubBarrels()

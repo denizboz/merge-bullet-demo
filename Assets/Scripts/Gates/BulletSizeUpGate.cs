@@ -6,7 +6,12 @@ namespace Gates
     {
         public override void OnPlayerEnter(Player player)
         {
-            player.SetBulletSize(isLarge: true);
+            player.SetBulletSize(effectPower);
+        }
+
+        protected override void UpdateUI()
+        {
+            effectUI.text = $"X{effectPower.ToString()}";
         }
     }
 }

@@ -244,6 +244,12 @@ namespace CommonTools.Runtime
         }
         #endregion
 
+        public static bool TryGetComponentInParent<T>(this Transform tr, out T comp) where T : Component
+        {
+            comp = tr.GetComponentInParent<T>();
+            return tr.GetComponentInParent<T>();
+        }
+        
         public static bool ChangesSignOnUpdate(this int value, int change)
         {
             if (value > 0)
