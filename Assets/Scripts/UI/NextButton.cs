@@ -3,11 +3,11 @@ using Events.Implementations;
 
 namespace UI
 {
-    public class BuyButton : UIButton
+    public class NextButton : UIButton
     {
         protected override void OnPressed()
         {
-            GameEventSystem.Invoke<BuyButtonPressedEvent>(1);
+            GameEventSystem.Invoke<NextButtonPressedEvent>();
         }
     }
 }

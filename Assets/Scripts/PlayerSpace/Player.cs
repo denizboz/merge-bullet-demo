@@ -1,6 +1,7 @@
-using System.Collections.Generic;
 using CommonTools.Runtime;
 using CommonTools.Runtime.DependencyInjection;
+using Events;
+using Events.Implementations;
 using Interfaces;
 using Managers;
 using UnityEngine;
@@ -9,9 +10,9 @@ namespace PlayerSpace
 {
     public class Player : MonoBehaviour
     {
-        private GameManager m_gameManager;
+        private bool m_isPlaying;
 
-        private List<Gun> m_guns = new List<Gun>(); // TODO: Register Guns
+        private Gun[] m_guns;
 
         private float m_moveRange;
         private float m_dragSensitivity;
@@ -38,8 +39,8 @@ namespace PlayerSpace
         {
             DI.Bind(this);
             
-            m_gameManager = DI.Resolve<GameManager>();
-            var parameters = m_gameManager.GameParameters;
+            var gameManager = DI.Resolve<GameManager>();
+            var parameters = gameManager.GameParameters;
             
             m_moveRange = parameters.MoveRange;
             m_moveSpeed = parameters.PlayerSpeed;
@@ -51,17 +52,23 @@ namespace PlayerSpace
 
             m_baseFireRange = parameters.BaseFireRange;
             m_maxFireRange = parameters.MaxFireRange;
+            
+            GameEventSystem.AddListener<LevelStartedEvent>(OnLevelStarted);
+            GameEventSystem.AddListener<LevelWonEvent>(OnLevelFinished);
+            GameEventSystem.AddListener<LevelFailedEvent>(OnLevelFinished);
         }
 
+        
         private void Update()
         {
-            if (m_gameManager.MainStageOver)
+            if (!m_isPlaying)
                 return;
             
-            transform.position += m_moveSpeed * Time.deltaTime * Vector3.forward;
-
             if (Input.GetMouseButton(0))
+            {
+                transform.position += m_moveSpeed * Time.deltaTime * Vector3.forward;
                 Swerve();
+            }
         }
 
         private void Swerve()
@@ -73,6 +80,8 @@ namespace PlayerSpace
             transform.position = transform.position.WithX(m_smoothX);
         }
 
+        public void RegisterGuns(Gun[] guns) => m_guns = guns;
+        
         public void SetFireRate(float fireRate)
         {
             fireRate = Mathf.Clamp(fireRate, m_baseFireRate, m_maxFireRate);
@@ -104,7 +113,34 @@ namespace PlayerSpace
             }
         }
 
-        public void SetRange(float range) => m_range = range;
+        public void SetRange(float range)
+        {
+            m_range = Mathf.Clamp(range, m_baseFireRange, m_maxFireRange);
+        }
+
+        private void OnLevelStarted(object none)
+        {
+            var gameManager = DI.Resolve<GameManager>();
+            var parameters = gameManager.GameParameters;
+
+            SetRange(parameters.BaseFireRange);
+            SetBulletSize(1);
+            
+            m_isPlaying = true;
+            
+            foreach (var gun in m_guns)
+            {
+                gun.EnableFiring(true);
+            }
+        }
+
+        private void OnLevelFinished(object none)
+        {
+            m_isPlaying = false;
+        }
+        
+        public bool IsBulletOutOfRange(Vector3 bulletPos) => 
+            Vector3.Distance(transform.position, bulletPos) > m_range;
         
         private void OnTriggerEnter(Collider other)
         {
@@ -112,7 +148,11 @@ namespace PlayerSpace
                 interactable.OnPlayerEnter(this);
         }
         
-        public bool IsBulletOutOfRange(Vector3 bulletPos) => 
-            Vector3.Distance(transform.position, bulletPos) > m_range;
+        private void OnDestroy()
+        {
+            GameEventSystem.RemoveListener<LevelStartedEvent>(OnLevelStarted);
+            GameEventSystem.RemoveListener<LevelWonEvent>(OnLevelFinished);
+            GameEventSystem.RemoveListener<LevelFailedEvent>(OnLevelFinished);
+        }
     }
 }

@@ -1,13 +1,19 @@
 ﻿using PlayerSpace;
+using UnityEngine;
 
 namespace Obstacles
 {
-    public class Wall : Obstacle
+    public class Box : Obstacle
     {
         public override void OnBulletEnter(Bullet bullet)
         {
             bullet.GetDamage(health);
             gameObject.SetActive(false);
+        }
+
+        protected override void UpdateUI()
+        {
+            //
         }
     }
 }

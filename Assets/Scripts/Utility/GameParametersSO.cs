@@ -38,6 +38,7 @@ namespace Utility
         [Range(0, 10)]
         public int InitialBulletCount;
 
+        [Range(0, 100)]
         public int InitialCurrency;
     }
 }

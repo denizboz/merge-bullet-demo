@@ -1,5 +1,7 @@
 ﻿using CommonTools.Runtime;
 using CommonTools.Runtime.DependencyInjection;
+using Events;
+using Events.Implementations;
 using Managers;
 using PlayerSpace;
 using UnityEngine;
@@ -116,6 +118,7 @@ namespace Merge
         {
             var mergedBullet = m_bulletFactory.Get(level: first.Level + 1, size: 2);
             mergedBullet.SetPosition(second.Position);
+            mergedBullet.ResetPreLevelHealth();
 
             var index1 = m_mergeGrid.IndexOfBullet(first);
             var index2 = m_mergeGrid.IndexOfBullet(second);
@@ -125,8 +128,8 @@ namespace Merge
             
             m_mergeGrid.SaveData();
             
-            m_bulletFactory.Return(first);
-            m_bulletFactory.Return(second);
+            GameEventSystem.Invoke<BulletDestroyedEvent>(first);
+            GameEventSystem.Invoke<BulletDestroyedEvent>(second);
         }
         
         private void ReleaseSelectedBullet()

@@ -6,7 +6,8 @@ namespace Gates
     {
         public override void OnPlayerEnter(Player player)
         {
-            player.SetFireBurst(3);
+            player.SetFireBurst(effectPower);
+            gameObject.SetActive(false);
         }
     }
 }

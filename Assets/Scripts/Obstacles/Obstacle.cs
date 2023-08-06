@@ -10,15 +10,15 @@ namespace Obstacles
     public abstract class Obstacle : MonoBehaviour, IInteractable
     {
         [SerializeField] protected int health;
-        [SerializeField] private TextMeshPro healthUI;
+        [SerializeField] private TextMeshPro m_healthUI;
 
-        public void OnBulletEnter(Bullet bullet)
+        public virtual void OnBulletEnter(Bullet bullet)
         {
             GetDamage(bullet.Damage);
             GameEventSystem.Invoke<BulletDestroyedEvent>();
         }
 
-        public void OnPlayerEnter(Player player)
+        public virtual void OnPlayerEnter(Player player)
         {
             GameEventSystem.Invoke<LevelFailedEvent>();
         }
@@ -33,8 +33,13 @@ namespace Obstacles
         
         protected virtual void UpdateUI()
         {
-            if (!healthUI)
+            if (!m_healthUI)
+            {
                 Debug.LogWarning("Assign 'healthUI' for auto-fill OnValidate.");
+                return;
+            }
+
+            m_healthUI.text = health.ToString();
         }
 
 #if UNITY_EDITOR

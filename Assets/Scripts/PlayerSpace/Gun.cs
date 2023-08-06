@@ -1,4 +1,6 @@
-﻿using CommonTools.Runtime.DependencyInjection;
+﻿using CommonTools.Runtime;
+using CommonTools.Runtime.DependencyInjection;
+using DG.Tweening;
 using Events;
 using Events.Implementations;
 using Managers;
@@ -10,9 +12,12 @@ namespace PlayerSpace
     public class Gun : MonoBehaviour
     {
         [SerializeField] private Transform m_barrel;
+        [SerializeField] private Rigidbody m_rigidbody;
+        
         private Transform[] m_subBarrels;
 
         private BulletFactory m_bulletFactory;
+        private Tweener m_moveTween;
 
         private int m_bulletLevel;
         private int m_bulletSize;
@@ -24,6 +29,7 @@ namespace PlayerSpace
         private float m_timer;
         
         private bool m_isFiring;
+
 
         private void Awake()
         {
@@ -39,18 +45,21 @@ namespace PlayerSpace
 
             SetFireBurst(1);
             
-            GameEventSystem.AddListener<LevelStartedEvent>(EnableFiring);
-            GameEventSystem.AddListener<LevelWonEvent>(DisableFiring);
-            GameEventSystem.AddListener<LevelFailedEvent>(DisableFiring);
+            GameEventSystem.AddListener<LevelWonEvent>(OnLevelFinished);
+            GameEventSystem.AddListener<LevelFailedEvent>(OnLevelFinished);
         }
+        
 
         private void Update()
         {
             if (!m_isFiring)
                 return;
+            
+            if (!Input.GetMouseButton(0))
+                return;
 
             m_timer += Time.deltaTime;
-
+            
             if (m_timer > m_firePeriod)
             {
                 m_timer = 0f;
@@ -58,6 +67,16 @@ namespace PlayerSpace
             }
         }
 
+        private void OnLevelFinished(object none)
+        {
+            EnableFiring(false);
+        }
+
+        public void EnableFiring(bool value)
+        {
+            m_isFiring = value;
+        }
+        
         private void Fire()
         {
             for (var i = 0; i < m_fireBurst; i++)
@@ -67,16 +86,6 @@ namespace PlayerSpace
                 bullet.SetPosition(m_barrel.position);
                 bullet.SetDirection(m_subBarrels[i].forward);
             }
-        }
-
-        private void EnableFiring(object none)
-        {
-            m_isFiring = true;
-        }
-
-        private void DisableFiring(object none)
-        {
-            m_isFiring = false;
         }
         
         public void SetFireRate(float fireRate)
@@ -89,11 +98,8 @@ namespace PlayerSpace
             m_fireBurst = burst;
             SetSubBarrels();
         }
-
-        public void SetBulletSize(int size)
-        {
-            m_bulletSize = size;
-        }
+        
+        public void SetBulletSize(int size) => m_bulletSize = size;
         
         private void SetSubBarrels()
         {
@@ -135,11 +141,29 @@ namespace PlayerSpace
             }
         }
 
+        public void DoLocalMove(Vector3 localPos, float duration)
+        {
+            m_moveTween?.Kill();
+            m_moveTween = transform.DOLocalMove(localPos, duration).SetEase(Ease.InOutQuad);
+        }
+        
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.transform.TryGetComponentInParent(out Bullet bullet))
+            {
+                m_bulletLevel = bullet.Level;
+                
+                var gunPlacer = DI.Resolve<GunPlacer>();
+                gunPlacer.TakeGun(this);
+                
+                GameEventSystem.Invoke<BulletEnteredGunEvent>(bullet);
+            }
+        }
+
         private void OnDestroy()
         {
-            GameEventSystem.RemoveListener<LevelStartedEvent>(EnableFiring);
-            GameEventSystem.RemoveListener<LevelWonEvent>(DisableFiring);
-            GameEventSystem.RemoveListener<LevelFailedEvent>(DisableFiring);
+            GameEventSystem.RemoveListener<LevelWonEvent>(OnLevelFinished);
+            GameEventSystem.RemoveListener<LevelFailedEvent>(OnLevelFinished);
         }
     }
 }

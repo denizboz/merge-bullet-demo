@@ -1,6 +1,9 @@
 ﻿using DG.Tweening;
+using Events;
+using Events.Implementations;
 using Interfaces;
 using UnityEngine;
+using Utility;
 
 namespace PlayerSpace
 {
@@ -11,6 +14,7 @@ namespace PlayerSpace
         [SerializeField] private MeshRenderer m_renderer;
         
         private int m_size;
+        private int m_preLevelHealth;
 
         public int Damage => m_size * Level;
         public Vector3 Position => transform.position;
@@ -57,6 +61,19 @@ namespace PlayerSpace
             gameObject.SetActive(value);
         }
 
+        public void GetDamage(int damage)
+        {
+            m_preLevelHealth -= damage;
+            
+            if (m_preLevelHealth < 1)
+                GameEventSystem.Invoke<BulletDestroyedEvent>(this);
+        }
+        
+        public void ResetPreLevelHealth()
+        {
+            m_preLevelHealth = Level * 100;
+        }
+        
         private void OnTriggerEnter(Collider other)
         {
             if(other.TryGetComponent(out IInteractable interactable))

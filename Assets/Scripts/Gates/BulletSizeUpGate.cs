@@ -7,6 +7,7 @@ namespace Gates
         public override void OnPlayerEnter(Player player)
         {
             player.SetBulletSize(effectPower);
+            gameObject.SetActive(false);
         }
 
         protected override void UpdateUI()

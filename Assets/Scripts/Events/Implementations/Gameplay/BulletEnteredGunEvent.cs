@@ -1,6 +1,6 @@
 ﻿namespace Events.Implementations
 {
-    public class FinishLineReachedEvent : Event
+    public class BulletEnteredGunEvent : Event
     {
         
     }

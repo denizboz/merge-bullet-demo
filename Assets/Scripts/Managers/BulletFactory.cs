@@ -50,16 +50,11 @@ namespace Managers
             return bullet;
         }
 
-        public void Return(Bullet bullet)
-        {
-            bullet.SetActive(false);
-            m_bulletPool.Enqueue(bullet);
-        }
-        
         private void OnBulletDestroyed(object usedBullet)
         {
             var bullet = (Bullet)usedBullet;
-            Return(bullet);
+            bullet.SetActive(false);
+            m_bulletPool.Enqueue(bullet);
         }
         
         private void CreatePool()

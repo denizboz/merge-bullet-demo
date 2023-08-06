@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9d8354df7024125be6020743ba13c0d, type: 3}
   m_Name: GameParameters
   m_EditorClassIdentifier: 
-  PlayerSpeed: 5
-  DragSensitivity: 5
-  MoveRange: 1
-  BaseFireRate: 0.1
-  MaxFireRate: 3
-  BaseFireRange: 10
-  MaxFireRange: 30
-  BulletSpeed: 10
-  MaxGunBurst: 1
-  BurstAngleCover: 5
-  InitialBulletCount: 3
-  InitialCurrency: 100
+  PlayerSpeed: 10
+  DragSensitivity: 10
+  MoveRange: 5
+  BaseFireRate: 2
+  MaxFireRate: 7
+  BaseFireRange: 20
+  MaxFireRange: 50
+  BulletSpeed: 30
+  MaxGunBurst: 5
+  BurstAngleCover: 30
+  InitialBulletCount: 1
+  InitialCurrency: 20

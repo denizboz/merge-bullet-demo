@@ -257,5 +257,35 @@ namespace CommonTools.Runtime
             else
                 return value + change > 0;
         }
+        
+        public static void SetGroupParent<T>(this IEnumerable<T> collection, Transform parent) where T : MonoBehaviour
+        {
+            using var enumerator = collection.GetEnumerator();
+            
+            while (enumerator.MoveNext())
+            {
+                enumerator.Current.transform.SetParent(parent);
+            }
+        }
+        
+        public static Vector3 GetCenterPosition<T>(this IEnumerable<T> collection) where T : MonoBehaviour
+        {
+            using var enumerator = collection.GetEnumerator();
+
+            var empty = !enumerator.MoveNext();
+
+            if (empty)
+                throw new Exception("Collection size must be positive.");
+
+            var center = enumerator.Current.transform.position;
+            
+            while (enumerator.MoveNext())
+            {
+                var currentPos = enumerator.Current.transform.position;
+                center = Vector3.Lerp(center, currentPos, 0.5f);
+            }
+
+            return center;
+        }
     }
 }

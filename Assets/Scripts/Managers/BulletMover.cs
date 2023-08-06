@@ -34,7 +34,7 @@ namespace Managers
             GameEventSystem.AddListener<BulletDestroyedEvent>(OnBulletDestroyed);
             
             GameEventSystem.AddListener<LevelStartedEvent>(OnLevelStarted);
-            GameEventSystem.AddListener<LevelWonEvent>(OnLevelStarted);
+            GameEventSystem.AddListener<LevelWonEvent>(OnLevelFinished);
             GameEventSystem.AddListener<LevelFailedEvent>(OnLevelFinished);
         }
 
@@ -61,7 +61,9 @@ namespace Managers
 
         private void CheckForOutOfRangeBullets()
         {
-            foreach (var bullet in m_activeBullets)
+            var activeBullets = m_activeBullets.ToArray();
+            
+            foreach (var bullet in activeBullets)
             {
                 if (m_player.IsBulletOutOfRange(bullet.Position))
                     GameEventSystem.Invoke<BulletDestroyedEvent>(bullet);
@@ -70,11 +72,17 @@ namespace Managers
         
         private void OnBulletActivated(object bullet)
         {
+            if (!m_isOn)
+                return;
+            
             m_activeBullets.Add((Bullet)bullet);
         }
 
         private void OnBulletDestroyed(object bullet)
         {
+            if (!m_isOn)
+                return;
+            
             m_activeBullets.Remove((Bullet)bullet);
         }
 
@@ -86,8 +94,8 @@ namespace Managers
 
         private void OnLevelFinished(object none)
         {
-            m_isOn = false;
             DestroyActiveBullets();
+            m_isOn = false;
         }
 
         private void DestroyActiveBullets()
@@ -97,6 +105,7 @@ namespace Managers
             foreach (var bullet in cloneList)
             {
                 GameEventSystem.Invoke<BulletDestroyedEvent>(bullet);
+                // this will automatically call OnBulletDestroyed through event channel
             }
         }
         
@@ -106,7 +115,7 @@ namespace Managers
             GameEventSystem.RemoveListener<BulletDestroyedEvent>(OnBulletDestroyed);
             
             GameEventSystem.RemoveListener<LevelStartedEvent>(OnLevelStarted);
-            GameEventSystem.RemoveListener<LevelWonEvent>(OnLevelStarted);
+            GameEventSystem.RemoveListener<LevelWonEvent>(OnLevelFinished);
             GameEventSystem.RemoveListener<LevelFailedEvent>(OnLevelFinished);
         }
     }
