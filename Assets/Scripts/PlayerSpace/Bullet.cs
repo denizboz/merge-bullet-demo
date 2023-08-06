@@ -30,11 +30,7 @@ namespace PlayerSpace
         public void SetSize(int size)
         {
             m_size = size;
-            
-            if (size == 1)
-                return;
-            
-            transform.localScale = m_size * Vector3.one;
+            transform.localScale = size * Vector3.one;
         }
 
         public void SetPosition(Vector3 position)
@@ -68,6 +64,11 @@ namespace PlayerSpace
             
             if (m_preLevelHealth < 1)
                 GameEventSystem.Invoke<BulletDestroyedEvent>(this);
+        }
+
+        public void ResetRotation()
+        {
+            transform.rotation = Quaternion.identity;
         }
         
         public void ResetPreLevelHealth()

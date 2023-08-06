@@ -21,7 +21,8 @@ namespace Managers
             if (!PlayerPrefs.HasKey(keyForCurrency))
                 SetFirstGameAmount();
 
-            GameEventSystem.AddListener<CurrencyEarnedOrLostEvent>(OnCurrencyEarnedOrLost);
+            GameEventSystem.AddListener<CurrencyEarnedEvent>(OnCurrencyEarned);
+            GameEventSystem.AddListener<LevelWonEvent>(OnLevelSuccess);
         }
 
         private void Start()
@@ -30,10 +31,12 @@ namespace Managers
             GameEventSystem.Invoke<CurrencyUpdatedEvent>(m_currentAmount);
         }
 
-        private void OnCurrencyEarnedOrLost(object change)
+        private void OnCurrencyEarned(object change)
         {
             m_currentAmount += (int)change;
             GameEventSystem.Invoke<CurrencyUpdatedEvent>(m_currentAmount);
+            
+            // data is saved at successful level end
         }
 
         public bool TrySpend(int amount)
@@ -49,6 +52,11 @@ namespace Managers
             return true;
         }
 
+        private void OnLevelSuccess(object none)
+        {
+            PlayerPrefs.SetInt(keyForCurrency, m_currentAmount);
+        }
+        
         private void SetFirstGameAmount()
         {
             var gameManager = DI.Resolve<GameManager>();
@@ -59,7 +67,8 @@ namespace Managers
         
         private void OnDestroy()
         {
-            GameEventSystem.RemoveListener<CurrencyEarnedOrLostEvent>(OnCurrencyEarnedOrLost);
+            GameEventSystem.RemoveListener<CurrencyEarnedEvent>(OnCurrencyEarned);
+            GameEventSystem.RemoveListener<LevelWonEvent>(OnLevelSuccess);
         }
     }
 }
