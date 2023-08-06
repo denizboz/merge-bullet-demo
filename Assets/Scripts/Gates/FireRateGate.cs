@@ -13,6 +13,7 @@ namespace Gates
         [SerializeField] private Material m_positiveMat;
         [SerializeField] private Material m_negativeMat;
         
+
         public override void OnPlayerEnter(Player player)
         {
             player.SetFireRate(effectPower);
@@ -36,12 +37,28 @@ namespace Gates
 
         protected override void UpdateUI()
         {
-            effectUI.text = effectPower.ToString();
+            var stringBuilder = StringBuilderPool.Get();
+            
+            if (effectPower > -1) 
+                stringBuilder.Append(positiveSign);
+            
+            stringBuilder.Append(effectPower.ToString());
+            
+            var effectString = StringBuilderPool.GetStringAndReturn(stringBuilder);
+            effectUI.text = effectString;
         }
 
         private void UpdateColor()
         {
-            m_renderer.sharedMaterial = effectPower > 0 ? m_positiveMat : m_negativeMat;
+            m_renderer.sharedMaterial = effectPower > -1 ? m_positiveMat : m_negativeMat;
         }
+
+#if UNITY_EDITOR
+        protected new void OnValidate()
+        {
+            base.OnValidate();
+            UpdateColor();
+        }
+#endif
     }
 }

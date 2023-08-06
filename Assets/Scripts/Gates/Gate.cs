@@ -10,15 +10,13 @@ namespace Gates
         [SerializeField] protected int effectPower;
         [SerializeField] protected TextMeshPro effectUI;
         
+        protected const char positiveSign = '+';
+        
         public virtual void OnBulletEnter(Bullet bullet) { }
         
         public virtual void OnPlayerEnter(Player player) { }
 
-        protected virtual void UpdateUI()
-        {
-            if (!effectUI)
-                Debug.LogWarning("Assign 'effectUI' for auto-fill OnValidate.");
-        }
+        protected virtual void UpdateUI() { }
 
 #if UNITY_EDITOR
         protected void OnValidate()

@@ -257,7 +257,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_center: {fileID: 104269406}
   m_cellPrefab: {fileID: 8348594998352604810, guid: 0cffd7378bd2ec64cb0419782d7605a7, type: 3}
-  m_gridParameters: {fileID: 11400000, guid: a8b453b35b42ec241a4b756eb202f537, type: 2}
   m_levelPriceData: {fileID: 11400000, guid: fdb5f60b5a62ecc4e9eb9d0e618555d7, type: 2}
 --- !u!4 &104269406
 Transform:

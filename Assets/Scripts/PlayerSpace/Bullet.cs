@@ -18,8 +18,8 @@ namespace PlayerSpace
 
         public int Damage => m_size * Level;
         public Vector3 Position => transform.position;
-        
-        
+
+
         public void MoveForward(float distance)
         {
             transform.position += distance * transform.forward;
@@ -29,10 +29,11 @@ namespace PlayerSpace
 
         public void SetSize(int size)
         {
+            m_size = size;
+            
             if (size == 1)
                 return;
-
-            m_size = size;
+            
             transform.localScale = m_size * Vector3.one;
         }
 

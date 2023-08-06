@@ -17,10 +17,10 @@ MonoBehaviour:
   MoveRange: 5
   BaseFireRate: 2
   MaxFireRate: 7
-  BaseFireRange: 20
+  BaseFireRange: 10
   MaxFireRange: 50
   BulletSpeed: 30
   MaxGunBurst: 5
-  BurstAngleCover: 30
+  BurstAngleCover: 25
   InitialBulletCount: 1
   InitialCurrency: 20

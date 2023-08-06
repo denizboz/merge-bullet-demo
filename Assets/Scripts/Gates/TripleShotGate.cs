@@ -9,5 +9,10 @@ namespace Gates
             player.SetFireBurst(effectPower);
             gameObject.SetActive(false);
         }
+
+        protected override void UpdateUI()
+        {
+            effectUI.text = $"x{effectPower.ToString()}";
+        }
     }
 }

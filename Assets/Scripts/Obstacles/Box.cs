@@ -10,10 +10,5 @@ namespace Obstacles
             bullet.GetDamage(health);
             gameObject.SetActive(false);
         }
-
-        protected override void UpdateUI()
-        {
-            //
-        }
     }
 }

@@ -15,7 +15,7 @@ namespace Obstacles
         public virtual void OnBulletEnter(Bullet bullet)
         {
             GetDamage(bullet.Damage);
-            GameEventSystem.Invoke<BulletDestroyedEvent>();
+            GameEventSystem.Invoke<BulletDestroyedEvent>(bullet);
         }
 
         public virtual void OnPlayerEnter(Player player)
@@ -26,6 +26,7 @@ namespace Obstacles
         private void GetDamage(int damage)
         {
             health -= damage;
+            UpdateUI();
 
             if (health < 1)
                 gameObject.SetActive(false);
@@ -34,10 +35,7 @@ namespace Obstacles
         protected virtual void UpdateUI()
         {
             if (!m_healthUI)
-            {
-                Debug.LogWarning("Assign 'healthUI' for auto-fill OnValidate.");
                 return;
-            }
 
             m_healthUI.text = health.ToString();
         }

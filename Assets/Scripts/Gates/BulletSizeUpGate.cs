@@ -12,7 +12,7 @@ namespace Gates
 
         protected override void UpdateUI()
         {
-            effectUI.text = $"X{effectPower.ToString()}";
+            effectUI.text = $"x{effectPower.ToString()}";
         }
     }
 }
